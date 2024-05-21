@@ -1,0 +1,7 @@
+sabun 3000 sbn 1
+sikat 15000 skt 3
+goreng 5000 m1 15
+mie 6000 m2 30
+rebus 6000 m2 30
+mie 7000 kp 20
+kopi 7000 kp 20
