@@ -1,12 +1,7 @@
-Kode Barang: d, Jumlah: 2, Harga Satuan: 23, Total Harga: 46
-Transaksi ID: 1, Kode Barang: er, Jumlah: 4, Harga Satuan: 23, Total Harga: 92
-Transaksi ID: 1, Kode Barang: t, Jumlah: 2, Harga Satuan: 123, Total Harga: 246
-Transaksi ID: 1, Kode Barang: t, Jumlah: 1, Harga Satuan: 123, Total Harga: 123
-Transaksi ID: 1, Kode Barang: t, Jumlah: 0, Harga Satuan: 123, Total Harga: 0
-Transaksi ID: 2, Kode Barang: t, Jumlah: 0, Harga Satuan: 123, Total Harga: 0
-Transaksi ID: 3, Kode Barang: y, Jumlah: 1, Harga Satuan: 1, Total Harga: 1
-Transaksi ID: 1, Kode Barang: m1, Jumlah: 3, Harga Satuan: 5000, Total Harga: 15000
-Transaksi ID: 2, Kode Barang: m2, Jumlah: 5, Harga Satuan: 6000, Total Harga: 30000
-Transaksi ID: 3, Kode Barang: kp, Jumlah: 3, Harga Satuan: 7000, Total Harga: 21000
-Transaksi ID: 1, Kode Barang: sbn, Jumlah: 12, Harga Satuan: 3000, Total Harga: 36000
-Transaksi ID: 2, Kode Barang: skt, Jumlah: 12, Harga Satuan: 15000, Total Harga: 180000
+Transaksi ID: 1, Kode Barang: kp, Jumlah: 2, Harga Satuan: 7000, Total Harga: 14000
+Transaksi ID: 1, Kode Barang: sbn, Jumlah: 2, Harga Satuan: 3000, Total Harga: 6000
+Transaksi ID: 2, Kode Barang: kp, Jumlah: 3, Harga Satuan: 7000, Total Harga: 21000
+Transaksi ID: 1, Kode Barang: sbn, Jumlah: 1, Harga Satuan: 3000, Total Harga: 3000
+Transaksi ID: 1, Kode Barang: sbn, Jumlah: 2, Harga Satuan: 3000, Total Harga: 6000
+Transaksi ID: 1, Kode Barang: kp, Jumlah: 3, Harga Satuan: 7000, Total Harga: 21000
+Transaksi ID: 2, Kode Barang: sbn, Jumlah: 5, Harga Satuan: 3000, Total Harga: 15000

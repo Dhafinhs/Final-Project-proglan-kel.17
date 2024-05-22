@@ -10,8 +10,6 @@ efisien dalam mengatur barang dan program kasir untuk membantu perhitungan
 pembelian.
 */
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,6 +23,15 @@ typedef struct Barang {
     int stok;
     struct Barang *next;
 } Barang;
+
+// Definisi struktur untuk mencatat pembelian
+typedef struct Pembelian {
+    char nama[50];
+    char kode[10];
+    int harga;
+    int jumlah;
+    struct Pembelian *next;
+} Pembelian;
 
 // Definisi struktur akun
 typedef struct Akun {
@@ -40,6 +47,17 @@ void tambahBarang(Barang **head, char *nama, int harga, char *kode, int stok) {
     newNode->harga = harga;
     strcpy(newNode->kode, kode);
     newNode->stok = stok;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// Fungsi untuk menambahkan pembelian ke linked list pembelian
+void tambahPembelian(Pembelian **head, char *nama, int harga, char *kode, int jumlah) {
+    Pembelian *newNode = (Pembelian *)malloc(sizeof(Pembelian));
+    strcpy(newNode->nama, nama);
+    newNode->harga = harga;
+    strcpy(newNode->kode, kode);
+    newNode->jumlah = jumlah;
     newNode->next = *head;
     *head = newNode;
 }
@@ -183,6 +201,60 @@ void searchByName(Barang *head) {
     }
 }
 
+// Fungsi untuk menyimpan transaksi ke file
+void simpanTransaksi(const char *kode, int jumlah, int harga, int transaksiID) {
+    FILE *file = fopen("transaksi.txt", "a"); // Membuka file dengan mode append
+    if (file == NULL) {
+        printf("Gagal membuka file transaksi.txt\n");
+        return;
+    }
+
+    // Menulis transaksi ke file
+    fprintf(file, "Transaksi ID: %d, Kode Barang: %s, Jumlah: %d, Harga Satuan: %d, Total Harga: %d\n",
+            transaksiID, kode, jumlah, harga, jumlah * harga);
+
+    fclose(file); // Menutup file
+}
+
+// Fungsi untuk mencetak nota pembelian
+void cetakNotaPembelian(Pembelian *head, int totalHarga) {
+    FILE *file = fopen("nota.txt", "a"); // Membuka file dengan mode append
+    if (file == NULL) {
+        printf("Gagal membuka file nota.txt\n");
+        return;
+    }
+
+    // Mencetak nota ke layar
+    printf("\n=== NOTA PEMBELIAN ===\n");
+    Pembelian *current = head;
+    while (current != NULL) {
+        printf("Kode Barang: %s\n", current->kode);
+        printf("Nama Barang: %s\n", current->nama);
+        printf("Jumlah: %d\n", current->jumlah);
+        printf("Harga Satuan: %d\n", current->harga);
+        printf("Total Harga: %d\n", current->harga * current->jumlah);
+        printf("----------------------\n");
+
+        // Menulis nota ke file
+        fprintf(file, "Kode Barang: %s\n", current->kode);
+        fprintf(file, "Nama Barang: %s\n", current->nama);
+        fprintf(file, "Jumlah: %d\n", current->jumlah);
+        fprintf(file, "Harga Satuan: %d\n", current->harga);
+        fprintf(file, "Total Harga: %d\n", current->harga * current->jumlah);
+        fprintf(file, "----------------------\n");
+
+        current = current->next;
+    }
+    printf("Total Harga: %d\n", totalHarga);
+    printf("=====================\n");
+
+    // Menulis total harga ke file
+    fprintf(file, "Total Harga: %d\n", totalHarga);
+    fprintf(file, "=====================\n");
+
+    fclose(file); // Menutup file
+}
+
 // Fungsi untuk melakukan transaksi
 void kasir(Barang *head) {
     char kode[10];
@@ -190,6 +262,7 @@ void kasir(Barang *head) {
     int totalHarga = 0;
     char lagi;
     int transaksiID = 1;
+    Pembelian *headPembelian = NULL;
 
     printf("==== MODE KASIR ====\n");
 
@@ -227,6 +300,10 @@ void kasir(Barang *head) {
 
                         // Simpan transaksi ke file
                         simpanTransaksi(kode, jumlah, current->harga, transaksiID++);
+
+                        // Tambahkan ke list pembelian
+                        tambahPembelian(&headPembelian, current->nama, current->harga, current->kode, jumlah);
+
                         break;
                     }
                     current = current->next;
@@ -245,35 +322,23 @@ void kasir(Barang *head) {
     printf("\nTotal harga pembelian: %d\n", totalHarga);
     printf("Terima kasih telah berbelanja!\n");
 
+    // Cetak nota pembelian
+    cetakNotaPembelian(headPembelian, totalHarga);
+
     // Simpan data barang ke file setelah transaksi
     simpanDataBarang(head);
 }
 
-// Fungsi untuk menyimpan transaksi ke file
-void simpanTransaksi(const char *kode, int jumlah, int harga, int transaksiID) {
-    FILE *file = fopen("transaksi.txt", "a"); // Membuka file dengan mode append
+// Fungsi untuk melihat history nota
+void lihatNota() {
+    FILE *file = fopen("nota.txt", "r");
     if (file == NULL) {
-        printf("Gagal membuka file transaksi.txt\n");
-        return;
-    }
-
-    // Menulis transaksi ke file
-    fprintf(file, "Transaksi ID: %d, Kode Barang: %s, Jumlah: %d, Harga Satuan: %d, Total Harga: %d\n",
-            transaksiID, kode, jumlah, harga, jumlah * harga);
-
-    fclose(file); // Menutup file
-}
-
-// Fungsi untuk melihat history transaksi
-void lihatTransaksi() {
-    FILE *file = fopen("transaksi.txt", "r");
-    if (file == NULL) {
-        printf("Gagal membuka file transaksi.txt\n");
+        printf("Gagal membuka file nota.txt\n");
         return;
     }
 
     char buffer[255];
-    printf("\nHistory Transaksi:\n");
+    printf("\nHistory Nota Pembelian:\n");
     printf("-------------------------------------------------\n");
     while (fgets(buffer, sizeof(buffer), file) != NULL) {
         printf("%s", buffer);
@@ -287,6 +352,18 @@ void lihatTransaksi() {
 void freeLinkedList(Barang *head) {
     Barang *current = head;
     Barang *next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+// Fungsi untuk membebaskan memori yang digunakan oleh linked list pembelian
+void freeLinkedListPembelian(Pembelian *head) {
+    Pembelian *current = head;
+    Pembelian *next;
 
     while (current != NULL) {
         next = current->next;
@@ -353,6 +430,99 @@ int login(Akun *akun, int jumlah_akun, int *isAdmin) {
     return 0;
 }
 
+void menuAdmin(Barang **head, int jumlah_barang) {
+    int pilihan;
+    int search;
+    do {
+        printf("\n==== MENU ADMIN ===\n");
+        printf("1. Input Data\n2. Lihat Database\n3. Kasir\n4. History Nota\n5. Keluar\nPilihan Anda: ");
+        scanf("%d", &pilihan);
+        getchar(); // Membersihkan buffer
+        system("cls");
+
+        switch (pilihan) {
+            case 1: // Input data barang
+                input(head, &jumlah_barang);
+                system("pause");
+                system("cls");
+                break;
+            case 2: // Lihat database
+                if (jumlah_barang > 0) {
+                    cetakDataBarang(*head);
+                } else {
+                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
+                }
+
+                printf("1. Searching\n2. Back\nPilihan: ");
+                scanf("%d", &search);
+                system("cls");
+                switch (search) {
+                    case 1:
+                        printf("Pilih Pencarian\n1. Nama\n2. Kode\nPilihan: ");
+                        int mode;
+                        scanf("%d", &mode);
+                        getchar(); // Membersihkan buffer
+
+                        switch (mode) {
+                            case 1: // Search by name
+                                searchByName(*head);
+                                break;
+                            case 2: // Search by kode
+                                searchByKode(*head);
+                                break;
+                        }
+                        break;
+                    case 2:
+                        break;
+                }
+
+                system("pause");
+                system("cls");
+                break;
+
+            case 3: // Opsi kasir
+                if (jumlah_barang > 0) {
+                    kasir(*head);
+                } else {
+                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
+                }
+                system("pause");
+                system("cls");
+                break;
+            case 4: // Lihat history nota
+                lihatNota();
+                system("pause");
+                system("cls");
+                break;
+        }
+    } while (pilihan != 5);
+}
+
+void menuNonAdmin(Barang **head, int jumlah_barang) {
+    int pilihan;
+    do {
+        printf("\n==== MENU NON-ADMIN ===\n");
+        printf("1. Kasir\n2. Keluar\n3. Login sebagai Admin\nPilihan Anda: ");
+        scanf("%d", &pilihan);
+        getchar(); // Membersihkan buffer
+        system("cls");
+
+        switch (pilihan) {
+            case 1: // Opsi kasir
+                if (jumlah_barang > 0) {
+                    kasir(*head);
+                } else {
+                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
+                }
+                system("pause");
+                system("cls");
+                break;
+            case 3: // Login sebagai Admin
+                return;
+        }
+    } while (pilihan != 2);
+}
+
 int main() {
     Barang *head = NULL;
     int jumlah_barang = 0;
@@ -364,106 +534,48 @@ int main() {
 
     int isAdmin = 0;
     int loginSuccess = 0;
-    do {
-        printf("==== LOGIN ====\n");
-        printf("1. Login\n2. Register\n3. Keluar\nPilihan: ");
-        int pilihan;
-        scanf("%d", &pilihan);
-        getchar(); // Membersihkan buffer
-        system("cls");
 
-        switch (pilihan) {
-        case 1:
-            loginSuccess = login(akun, jumlah_akun, &isAdmin);
-            if (!loginSuccess) {
-                printf("Login gagal! Username atau password salah.\n");
-                system("pause");
-                system("cls");
-            }
-            break;
-        case 2:
-            registerAkun();
-            system("pause");
+    while (1) {
+        do {
+            printf("==== LOGIN ====\n");
+            printf("1. Login\n2. Register\n3. Keluar\nPilihan: ");
+            int pilihan;
+            scanf("%d", &pilihan);
+            getchar(); // Membersihkan buffer
             system("cls");
-            break;
-        case 3:
-            printf("==== TERIMA KASIH ====\n");
-            return 0;
-        }
-    } while (!loginSuccess);
 
-    int pilihan;
-    do {
-        printf("\nSelamat Datang Di Simulator Kasir!\n\n");
-        printf("==== KASIR BARANG ===\n");
-        printf("1. Input Data\n2. Database\n3. Search\n4. Kasir\n5. History Transaksi\n6. Keluar\nPilihan Anda: ");
-        scanf("%d", &pilihan);
-        getchar(); // Membersihkan buffer
-        system("cls");
-
-        if (isAdmin || pilihan == 4 || pilihan == 2 || pilihan == 6) {
             switch (pilihan) {
-            case 1: // Input data barang
-                input(&head, &jumlah_barang);
-                system("pause");
-                system("cls");
-                break;
-            case 2: // Lihat database
-                if (jumlah_barang > 0) {
-                    cetakDataBarang(head);
-                } else {
-                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
-                }
-                system("pause");
-                system("cls");
-                break;
-            case 3: // Pilihan searching
-                if (jumlah_barang > 0) {
-                    printf("Pilih Pencarian\n1. Nama\n2. Kode\nPilihan: ");
-                    int mode;
-                    scanf("%d", &mode);
-                    getchar(); // Membersihkan buffer
-
-                    switch (mode) {
-                    case 1: // Search by name
-                        searchByName(head);
-                        break;
-                    case 2: // Search by kode
-                        searchByKode(head);
-                        break;
+                case 1:
+                    loginSuccess = login(akun, jumlah_akun, &isAdmin);
+                    if (!loginSuccess) {
+                        printf("Login gagal! Username atau password salah.\n");
+                        system("pause");
+                        system("cls");
                     }
-                } else {
-                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
-                }
-                system("pause");
-                system("cls");
-                break;
-            case 4: // Opsi kasir
-                if (jumlah_barang > 0) {
-                    kasir(head);
-                } else {
-                    printf("Data barang kosong. Silakan input data terlebih dahulu.\n");
-                }
-                system("pause");
-                system("cls");
-                break;
-            case 5: // Lihat history transaksi (hanya untuk admin)
-                if (isAdmin) {
-                    lihatTransaksi();
-                } else {
-                    printf("Anda tidak memiliki akses ke fitur ini. Silakan login sebagai admin.\n");
-                }
-                system("pause");
-                system("cls");
-                break;
+                    break;
+                case 2:
+                    registerAkun();
+                    system("pause");
+                    system("cls");
+                    break;
+                case 3:
+                    printf("==== TERIMA KASIH ====\n");
+                    return 0;
             }
+        } while (!loginSuccess);
+
+        if (isAdmin) {
+            menuAdmin(&head, jumlah_barang);
         } else {
-            printf("Anda tidak memiliki akses ke fitur ini. Silakan login sebagai admin.\n");
-            system("pause");
-            system("cls");
+            menuNonAdmin(&head, jumlah_barang);
+            if (isAdmin) {
+                continue;
+            }
         }
-        
-    } while (pilihan != 6);
+
+        // Reset login success for potential re-login
+        loginSuccess = 0;
+    }
 
     // Membebaskan memori yang digunakan oleh linked list
     freeLinkedList(head);
@@ -471,3 +583,6 @@ int main() {
     printf("==== TERIMA KASIH ====\n");
     return 0;
 }
+
+
+
