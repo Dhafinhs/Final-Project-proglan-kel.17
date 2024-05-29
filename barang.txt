@@ -1,7 +1,12 @@
+kopi 7000 kp 18
+mie rebus 6000 m2 30
+mie goreng 5000 m1 15
+sikat 15000 skt 15
 sabun 3000 sbn 1
-sikat 15000 skt 3
-goreng 5000 m1 15
-mie 6000 m2 30
+kopi 7000 kp 19
+mie 7000 kp 19
 rebus 6000 m2 30
-mie 7000 kp 20
-kopi 7000 kp 20
+mie 6000 m2 30
+goreng 5000 m1 13
+sikat 15000 skt 15
+sabun 3000 sbn 0

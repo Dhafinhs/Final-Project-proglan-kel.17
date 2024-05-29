@@ -1,0 +1,48 @@
+Kode Barang: m1
+Nama Barang: mie goreng
+Jumlah: 2
+Harga Satuan: 5000
+Total Harga: 10000
+----------------------
+Kode Barang: kp
+Nama Barang: kopi
+Jumlah: 1
+Harga Satuan: 7000
+Total Harga: 7000
+----------------------
+Kode Barang: sbn
+Nama Barang: sabun
+Jumlah: 12
+Harga Satuan: 3000
+Total Harga: 36000
+----------------------
+Total Harga: 53000
+=====================
+Kode Barang: sbn
+Nama Barang: sabun
+Jumlah: 1
+Harga Satuan: 3000
+Total Harga: 3000
+----------------------
+Total Harga: 3000
+=====================
+Kode Barang: sbn
+Nama Barang: sabun
+Jumlah: 10
+Harga Satuan: 3000
+Total Harga: 30000
+----------------------
+Kode Barang: sbn
+Nama Barang: sabun
+Jumlah: 2
+Harga Satuan: 3000
+Total Harga: 6000
+----------------------
+Kode Barang: kp
+Nama Barang: kopi
+Jumlah: 2
+Harga Satuan: 7000
+Total Harga: 14000
+----------------------
+Total Harga: 50000
+=====================

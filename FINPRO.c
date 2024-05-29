@@ -284,7 +284,7 @@ void kasir(Barang *head) {
                         printf("Barang %s dengan harga %d ditemukan. Stok tersedia: %d\n", current->nama, current->harga, current->stok);
                         
                         do {
-                            printf("Masukkan jumlah barang: ");
+                            printf("Masukkan jumlah barang yang dibeli: ");
                             scanf("%d", &jumlah);
                             if (jumlah <= current->stok) {
                                 break;
@@ -583,6 +583,3 @@ int main() {
     printf("==== TERIMA KASIH ====\n");
     return 0;
 }
-
-
-
